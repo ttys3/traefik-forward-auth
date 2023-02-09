@@ -22,6 +22,7 @@ func main() {
 	server := internal.NewServer()
 
 	// Attach router to default server
+	http.HandleFunc("/_healthz", server.HealthHandler)
 	http.HandleFunc("/", server.RootHandler)
 
 	// Start
