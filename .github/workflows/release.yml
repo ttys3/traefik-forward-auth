@@ -20,10 +20,10 @@ jobs:
       id: go
 
     - name: Build AMD64
-      run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -installsuffix nocgo -v -o traefik-forward-auth_amd64 ./cmd
+      run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o traefik-forward-auth_amd64 ./cmd
 
     - name: Build ARM
-      run: CGO_ENABLED=0 GOOS=linux GOARCH=arm GO111MODULE=on go build -a -installsuffix nocgo -v -o traefik-forward-auth_arm ./cmd
+      run: CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -o traefik-forward-auth_arm ./cmd
 
     - name: Get tag name
       run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
