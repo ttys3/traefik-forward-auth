@@ -81,8 +81,7 @@ jobs:
           --builder paketobuildpacks/builder:base \
           --env BP_GO_VERSION="1.19.5" \
           --env BP_GO_BUILD_LDFLAGS="-s -w" \
-          --env BP_GO_BUILD_FLAGS="-o $GO_MOD_BASE_NAME" \
-          --env BP_GO_TARGETS="./cmd" \
+          --env BP_GO_TARGETS="./cmd/traefik-forward-auth" \
           --publish
         shell: bash
         env:
