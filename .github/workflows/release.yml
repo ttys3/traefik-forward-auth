@@ -79,16 +79,20 @@ jobs:
           REPO_URL=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY
           
           # https://paketo.io/docs/howto/go/
+          # https://github.com/paketo-buildpacks/image-labels
+          # https://github.com/opencontainers/image-spec/blob/main/annotations.md
+          # https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
+          
           pack build "$PACKAGE" --buildpack paketo-buildpacks/go \
-          --buildpack gcr.io/paketo-buildpacks/image-labels \
           --builder paketobuildpacks/builder:base \
           --publish \
           --env BP_GO_VERSION="1.19.5" \
           --env BP_GO_BUILD_LDFLAGS="-s -w" \
           --env BP_GO_TARGETS="./cmd/traefik-forward-auth" \
+          --env BP_OCI_TITLE="$GO_MOD_BASE_NAME" \
           --env BP_OCI_AUTHORS="$GITHUB_ACTOR" \
           --env BP_OCI_CREATED="$(date --rfc-3339=seconds)" \
-          --env BP_OCI_DESCRIPTION="" \
+          --env BP_OCI_DESCRIPTION="Minimal forward authentication service that provides Google/OpenID oauth based login and authentication for the traefik reverse proxy" \
           --env BP_OCI_DOCUMENTATION="$REPO_URL" \
           --env BP_OCI_REF_NAME="$GITHUB_REF_NAME" \
           --env BP_OCI_REVISION="$GITHUB_SHA" \
