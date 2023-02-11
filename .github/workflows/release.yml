@@ -76,13 +76,25 @@ jobs:
           pack config experimental true
           pack config pull-policy always
           
+          REPO_URL=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY
+          
           # https://paketo.io/docs/howto/go/
           pack build "$PACKAGE" --buildpack paketo-buildpacks/go \
+          --buildpack gcr.io/paketo-buildpacks/image-labels \
           --builder paketobuildpacks/builder:base \
+          --publish \
           --env BP_GO_VERSION="1.19.5" \
           --env BP_GO_BUILD_LDFLAGS="-s -w" \
           --env BP_GO_TARGETS="./cmd/traefik-forward-auth" \
-          --publish
+          --env BP_OCI_AUTHORS="$GITHUB_ACTOR" \
+          --env BP_OCI_CREATED="$(date --rfc-3339=seconds)" \
+          --env BP_OCI_DESCRIPTION="" \
+          --env BP_OCI_DOCUMENTATION="$REPO_URL" \
+          --env BP_OCI_REF_NAME="$GITHUB_REF_NAME" \
+          --env BP_OCI_REVISION="$GITHUB_SHA" \
+          --env BP_OCI_SOURCE="$REPO_URL" \
+          --env BP_OCI_URL="$REPO_URL" \
+          --env BP_OCI_VERSION="$GITHUB_REF_NAME"
         shell: bash
         env:
           REPO: docker.io/${{ secrets.DOCKER_HUB_USER }}
