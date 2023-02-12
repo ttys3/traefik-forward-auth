@@ -56,35 +56,35 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_PASS }}
       - id: setup-pack
-        uses: buildpacks/github-actions/setup-pack@v4.9.0
+        uses: buildpacks/github-actions/setup-pack@v5.0.1
       - id: register
         run: |
           #!/usr/bin/env bash
           set -euo pipefail
-          
+
           GO_MOD_NAME=$(grep -m 1 'module ' go.mod | cut -d' ' -f2)
           GO_MOD_BASE_NAME=$(echo $GO_MOD_NAME | awk -F '/' '{print $NF}')
           VERSION="$(git describe --always --tags --abbrev=0 --match 'v*' --exclude '*/*' | tr -d "[\r\n]")"
           PACKAGE="${REPO}/$GO_MOD_BASE_NAME:${VERSION}"
-          
+
           # https://github.com/buildpacks/spec/blob/main/platform.md#registry-authentication
           # https://github.com/google/go-containerregistry/blob/3624968304fdc039a5d90be0be239c394db1f3e9/pkg/authn/keychain.go#L74
           unset CNB_REGISTRY_AUTH
-          
+
           echo "PACKAGE: $PACKAGE"
 
           pack config experimental true
           pack config pull-policy always
-          
+
           REPO_URL=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY
-          
+
           # https://paketo.io/docs/howto/go/
           # https://github.com/paketo-buildpacks/image-labels
           # https://github.com/opencontainers/image-spec/blob/main/annotations.md
           # https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
-          
+
           pack build "$PACKAGE" --buildpack paketo-buildpacks/go \
-          --builder paketobuildpacks/builder:base \
+          --builder paketobuildpacks/builder-jammy-base:latest \
           --publish \
           --env BP_GO_VERSION="1.19.5" \
           --env BP_GO_BUILD_LDFLAGS="-s -w" \
