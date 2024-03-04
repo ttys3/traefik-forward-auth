@@ -6,7 +6,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/thomseddon/traefik-forward-auth/internal/provider"
-	traefikhttp "github.com/traefik/traefik/v2/pkg/muxer/http"
+	traefikhttp "github.com/traefik/traefik/v3/pkg/muxer/http"
 )
 
 // Server contains router and handler methods
