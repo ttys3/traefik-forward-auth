@@ -2,6 +2,7 @@ package tfa
 
 import (
 	"fmt"
+	"github.com/traefik/traefik/v3/pkg/middlewares/requestdecorator"
 	"net/http"
 	"net/url"
 
@@ -33,9 +34,27 @@ func (s *Server) buildRoutes() {
 	for name, rule := range config.Rules {
 		matchRule := rule.formattedRule()
 		if rule.Action == "allow" {
-			s.router.AddRoute(matchRule, "", 1, s.AllowHandler(name))
+			if err := s.router.AddRoute(matchRule, "", 1, s.AllowHandler(name)); err != nil {
+				log.WithFields(logrus.Fields{
+					"error":         err,
+					"rule_name":     name,
+					"matchRule":     matchRule,
+					"rule.provider": rule.Provider,
+					"rule.action":   rule.Action,
+					"rule.rule":     rule.Rule,
+				}).Error("Error AddRoute allow rule")
+			}
 		} else {
-			s.router.AddRoute(matchRule, "", 1, s.AuthHandler(rule.Provider, name))
+			if err := s.router.AddRoute(matchRule, "", 1, s.AuthHandler(rule.Provider, name)); err != nil {
+				log.WithFields(logrus.Fields{
+					"error":         err,
+					"rule_name":     name,
+					"matchRule":     matchRule,
+					"rule.provider": rule.Provider,
+					"rule.action":   rule.Action,
+					"rule.rule":     rule.Rule,
+				}).Error("Error AddRoute auth rule")
+			}
 		}
 	}
 
@@ -65,8 +84,11 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 		r.URL, _ = url.Parse(r.Header.Get("X-Forwarded-Uri"))
 	}
 
+	// RequestDecorator is necessary for the Host matcher
+	reqHost := requestdecorator.New(nil)
+
 	// Pass to mux
-	s.router.ServeHTTP(w, r)
+	reqHost.ServeHTTP(w, r, s.router.ServeHTTP)
 }
 
 // AllowHandler Allows requests

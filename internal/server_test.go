@@ -351,11 +351,11 @@ func TestServerRouteHeaders(t *testing.T) {
 	config.Rules = map[string]*Rule{
 		"1": {
 			Action: "allow",
-			Rule:   "Headers(`X-Test`, `test123`)",
+			Rule:   "Header(`X-Test`, `test123`)",
 		},
 		"2": {
 			Action: "allow",
-			Rule:   "HeadersRegexp(`X-Test`, `test(456|789)`)",
+			Rule:   "HeaderRegexp(`X-Test`, `test(456|789)`)",
 		},
 	}
 
@@ -388,7 +388,7 @@ func TestServerRouteHost(t *testing.T) {
 		},
 		"2": {
 			Action: "allow",
-			Rule:   "HostRegexp(`sub{num:[0-9]}.example.com`)",
+			Rule:   "HostRegexp(`sub[\\d]*.example.com`)",
 		},
 	}
 
@@ -469,7 +469,7 @@ func TestServerRouteQuery(t *testing.T) {
 	config.Rules = map[string]*Rule{
 		"1": {
 			Action: "allow",
-			Rule:   "Query(`q=test123`)",
+			Rule:   "QueryRegexp(`q`, `test123`)",
 		},
 	}
 

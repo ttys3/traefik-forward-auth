@@ -351,9 +351,10 @@ func NewRule() *Rule {
 }
 
 func (r *Rule) formattedRule() string {
+	return r.Rule
 	// Traefik implements their own "Host" matcher and then offers "HostRegexp"
 	// to invoke the mux "Host" matcher. This ensures the mux version is used
-	return strings.ReplaceAll(r.Rule, "Host(", "HostRegexp(")
+	// return strings.ReplaceAll(r.Rule, "Host(", "HostRegexp(")
 }
 
 // Validate validates a rule
