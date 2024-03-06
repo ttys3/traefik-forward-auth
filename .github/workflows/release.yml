@@ -48,19 +48,20 @@ jobs:
       - id: checkout
         uses: actions/checkout@v3
 
-      - if: ${{ github.event_name != 'pull_request' || ! github.event.pull_request.head.repo.fork }}
-        uses: redhat-actions/podman-login@v1
+      - id: setup-docker-credentials
+        if: ${{ github.event_name != 'pull_request' || ! github.event.pull_request.head.repo.fork }}
         env:
           # setup $HOME/.docker/config.json for buildpacks
           REGISTRY_AUTH_FILE: $HOME/.docker/config.json
           # for docker, we only need:
           # DOCKER_CONFIG: $HOME/.docker
-        with:
-          registry: docker.io
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_PASS }}
-          # setup $HOME/.docker/config.json for buildpacks
-          auth_file_path: $HOME/.docker/config.json
+        run: |
+          sudo apt update
+          sudo apt-get -y install podman
+          echo "podman version: $(podman version)"
+          echo "podman info: $(podman info)"
+          test -d $HOME/.docker/ || mkdir $HOME/.docker/
+          podman login docker.io -u ${{ secrets.DOCKER_HUB_USER }} -p ${{ secrets.DOCKER_HUB_PASS }} --compat-auth-file=$HOME/.docker/config.json
 
       - id: setup-pack
         uses: buildpacks/github-actions/setup-pack@v5.5.3
