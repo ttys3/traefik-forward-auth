@@ -80,6 +80,7 @@ jobs:
           unset CNB_REGISTRY_AUTH
 
           echo "PACKAGE: $PACKAGE"
+          echo "pack version: $(pack version)"
 
           pack config experimental true
           pack config pull-policy always
@@ -93,10 +94,10 @@ jobs:
 
           # https://github.com/paketo-buildpacks/go => docker.io/80x86/paketo-buildpacks-go:4.0.3 wigh go1.20 support
           # https://registry.hub.docker.com/r/paketobuildpacks/go/tags
-          pack build "$PACKAGE" --buildpack paketobuildpacks/go:4.7.0 \
+          pack build "$PACKAGE" --buildpack paketobuildpacks/go:4.8.0 \
           --builder paketobuildpacks/builder-jammy-base:latest \
           --publish \
-          --env BP_GO_VERSION="1.21.7" \
+          --env BP_GO_VERSION="1.22" \
           --env BP_GO_BUILD_LDFLAGS="-s -w" \
           --env BP_GO_TARGETS="./cmd/traefik-forward-auth" \
           --env BP_OCI_TITLE="$GO_MOD_BASE_NAME" \
